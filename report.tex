@@ -1,0 +1,222 @@
+% Created 2023-05-13 Sat 15:56
+% Intended LaTeX compiler: pdflatex
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setlength\headheight{45pt}
+\rhead{\includegraphics[width=4cm]{Logo-uc3m.jpg}}
+\lhead{L. Camacho, V. Carnicero\newline Artificial Intelligence\newline Thermostat Project Report}
+\author{Luis Camacho}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={Luis Camacho},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 28.2 (Org mode 9.6)},
+ pdflang={English}}
+\usepackage{biblatex}
+
+\begin{document}
+%\setlength{\headsep}{30pt}
+\setlength\parindent{0pt}
+\begin{titlepage}
+
+	\begin{center}
+		\vspace*{80pt}
+
+		\begin{LARGE}			\bf{Thermostat Project Report \\}
+		\end{LARGE}
+		\vspace{20pt}
+		\textbf{
+			Luis Camacho Portero (100472172)\\
+			Víctor Carnicero Príncipe (100472280)}\\
+		\vspace{40pt}
+		\includegraphics{Logo-uc3m.jpg} \\
+		\vspace{40pt}
+
+\begin{Large}
+		Artificial Intelligence\\
+		\vspace{10pt}
+		Course 2022-2023\\
+\end{Large}
+		\vspace{30pt}
+		\vspace{30pt}
+
+
+		\vspace{20pt}
+
+
+	\end{center}
+\pagenumbering{gobble}
+\end{titlepage}
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\newpage
+\section{Executive summary}
+\label{sec:orgefc255d}
+This executive summary provides a brief overview on all the aspects of the project, aiming to highlight the most important points and give a general perspective.\bigskip
+
+The following summary explains the phases and main findings in the report:
+\begin{itemize}
+\item \textbf{Main aspects of MDPs:} We were asked to develop an MDP to control an thermostat system, we found this device properly adapts to MDP’s needs, since there is a defined set of actions (Turn ON, Turn OFF); and easily identifiable probabilities for the change of states; there is also a sufficiently obvious cost to the actions, being ON costs more money than being OFF.
+\item \textbf{General MDP interface:} For the development of the particular MDP requested we developed a structure capable of storing any MDP and obtaining the optimal policies for the specific problems. We tried to make it as general as possible to impose the least amount of constraints to the development after. We have two classes; State, which stores the information about the states, which are goals and which are not; and MDP, that takes all the states, actions, transition function and costs. Using these it calculates the optimal policies for the states given a minimum difference between cycles.
+\item \textbf{Design of the MDP:} Since the statement was pretty clear, the design of the MDP did not take a long time, we set a state for each possible temperature (total 19 states), from which using the actions proposed change to the other states. The thing that we had to think about the most is the cost of the actions, after a lot of analysis we conclude that  \(Cost(ON) = 4\) and \(Cost(OFF) = 0.5\) is a good solution, and it is the one that we propose.
+\item \textbf{Budget:} Analyzing the phases of production  of the system, the ones that we did and the ones that a complete project would need, we conclude that the whole process could take around 85 hours to complete, and an approximate cost is around 1750 € + royalties.
+\end{itemize}
+\newpage
+\section{Objectives}
+\label{sec:orgb4c5560}
+The aim of this project is the development of a Markov Decision Process that controls an air heating device. Not only this but a general implementation of MDPs in python that can later be used to create any MDP given all the necessary parameters.\bigskip
+
+This document provides an overview of the project, including its purpose and the analysis done in the several stages of development.\bigskip
+
+The objective is to present a solution capable of using the general MDP model to make a device capable of deciding in each situation the best action to take, our intentions are to maximize the energy efficiency and minimize the cost to get to the desired temperature so that the users can benefit from it without having to manually decide what to do.\bigskip
+
+The phases of this project include the design, implementation, optimization and testing. We also do an analysis of the context of the project outside of the proposed assignment to provide a general overview on all the aspects to consider in the realization. This includes a study on the possible costs that could be given to the actions and an exploration on the financial costs of carrying the project could have.\bigskip
+
+The most interesting features of MDPs include that they are easily tested and the policies are only dependent on the temperatures, this way they can be thoroughly tested before the presentation of the product to be sure that there are no inconsistencies.
+\newpage
+\section{Formal description}
+\label{sec:org352eae0}
+From the information provided in the statement, we can define the Markov Decision Process as follows:\footnote{The costs will be defined later on in the cost-model analysis section.}
+\[S= \{16,16.5,17, \dots ,24, 24.5,25\}\]
+\[A=\{\text{On}, \text{Off}\}\]
+\begin{center}
+\begin{tabular}{|c|cccc|}
+\hline
+\(P(s_{t+1} \rvert \text{On},s_t)\) & s\textsubscript{t+1}=s\textsubscript{t}-0.5 & s\textsubscript{t+1}=s\textsubscript{t} & s\textsubscript{t+1}=s\textsubscript{t}+0.5 & s\textsubscript{t+1}=s\textsubscript{t}+1\\\empty
+\hline
+16 & 0 & 0.3 & 0.5 & 0.2\\\empty
+24.5 & 0.1 & 0.2 & 0.7 & 0\\\empty
+25 & 0.1 & 0.9 & 0 & 0\\\empty
+s\textsubscript{t} & 0.1 & 0.2 & 0.5 & 0.2\\\empty
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c|ccc|}
+\hline
+\(P(s_{t+1} \rvert \text{Off},s_t)\) & s\textsubscript{t+1}=s\textsubscript{t}-0.5 & s\textsubscript{t+1}=s\textsubscript{t} & s\textsubscript{t+1}=s\textsubscript{t}+0.5\\\empty
+\hline
+16 & 0 & 0.9 & 0.1\\\empty
+25 & 0.7 & 0.3 & 0\\\empty
+s\textsubscript{t} & 0.7 & 0.2 & 0.1\\\empty
+\hline
+\end{tabular}
+\end{center}
+\newpage
+\section{Detailed cost model analysis}
+\label{sec:org28b269a}
+For finishing the definition of the Markov Decision Process, we need to define the costs for each action. In order to assign the correct costs, we need to analyse in some depth how we want the thermostat to behave:\bigskip
+
+On the one hand, we need the thermostat to work its way to the goal temperature, as its main priority should be reaching the goal temperature defined by the user.\bigskip
+
+On the other hand, since it is an electronic device that is connected to the heating system, one of the main concerns regarding the user is also the price of both heat and electricity. This can be a determinant factor, and we do not want the device to consume more energy than completely necessary to reach the goal state.\bigskip
+
+Thus, if we consider that turning on the thermostat would greatly increase the heat and electricity consumption, we need it to be higher than the cost of turning off the thermostat, which would only consume electricity in an idle mode (as it needs to keep checking every half an hour any change in the temperature).
+Thus, having a cost eight times higher when on than when it is off could be considered a reasonable ratio between the costs.\bigskip
+
+Now, using our approximation of the cost, since the thermostat consumes so little when turned off, we could say that its cost of turning it off is 0.5, which means that the cost of turning on the thermostat will be 4.
+\newpage
+\section{Optimal policy}
+\label{sec:org4e87b30}
+With the stated Markov models and the aforementioned costs, we will get the following optimal policy for each state:
+\begin{table}[htbp]
+\caption{Optimal policy for each temperature}
+\centering
+\begin{tabular}{ccc}
+\textbf{State} & \textbf{Action} & \textbf{Cost}\\\empty
+\hline
+16 & On & 60.45\\\empty
+16.5 & On & 56.14\\\empty
+17 & On & 51.18\\\empty
+17.5 & On & 46.20\\\empty
+18 & On & 41.20\\\empty
+18.5 & On & 36.20\\\empty
+19 & On & 31.20\\\empty
+19.5 & On & 26.20\\\empty
+20 & On & 21.19\\\empty
+20.5 & On & 16.22\\\empty
+21 & On & 11.10\\\empty
+21.5 & On & 6.53\\\empty
+22 & None & 0\\\empty
+22.5 & Off & 0.82\\\empty
+22 & Off & 1.65\\\empty
+23.5 & Off & 2.49\\\empty
+23 & Off & 3.32\\\empty
+24.5 & Off & 4.14\\\empty
+25 & Off & 4.85\\\empty
+\hline
+\end{tabular}
+\end{table}
+
+Notice that the defined costs depend on the way we have interpreted the necessities of the users. Any change on the costs could probably yield the same results for this MDP, but if we change the ranges (that is, the minimum and maximum temperatures change, as well as the goal) it could behave differently than expected. That is why we cannot ensure that the MDP will work as intended if these costs are modified.
+\newpage
+\section{Project phases}
+\label{sec:org1a26177}
+\subsection{Design}
+\label{sec:org903f999}
+We made the design of the software with two main characteristics in mind: modularity and flexibility.
+\begin{itemize}
+\item \textbf{Modularity:} We aim to provide the thermostat's optimal policy in such a way that the user only needs to use a single class (or the fewer possible) in which all their main functionalities are available, without the need of dealing with complex, intricate classes that would separate them from their real objective. Not only would it provide simplicity for the user, but also security as the interactions with lower layers of the program would be avoided.
+\item \textbf{Security:} Our software not only must be able to give the elementary functions for the user to accomplish their objectives. It should also guarantee the correct functioning of the program, in the sense that all interactions between the user and the software are completely safe and cannot not yield unexpected results.\footnote{We have already stated that we do not recomend changing the costs for each action. However, we just suggest it. We do not restrict the user from changing the costs if that is what they want.}
+\end{itemize}
+
+\subsection{Implementation}
+\label{sec:org5f80aa1}
+
+\subsection{Testing}
+\label{sec:org1a001a5}
+To test that the class \texttt{MDP} works as intended and yields the correct optimal policies, we implemented some existing MDP whose solutions are already available (so that we can avoid computing the optimal policies manually and thus being possible to make unnoticed mistakes). These MDPs go from really basic (\texttt{test\_1}) to more complex examples (\texttt{test\_3}) that ensure that the followed algorithm works well.
+
+Also, in order to test the \texttt{Thermostat} class, we made some tests that interact with it in any possible way that the user could. This way we avoid any unforeseen mistake that could happen when the program is actually inserted into the thermostat. \sout{Also, to check that the costs were precise, we change the ranges}
+\newpage
+\section{Budget}
+\label{sec:org4a09b42}
+To calculate this we imagine the costs of a complete project, including parts that we did not need to do for the assignment.\bigskip
+
+We will do a separation on the several phases and an estimation of the time it would take to complete each part, we will use this to estimate the costs of the project, since to give an amount without much justification is probably not useful.\bigskip
+
+To start we will propose a context for the development of the project, we are not going to treat this section as a way to express how much we would ask for, but do an objective analysis on the process and reach an estimation that can be translated to a real situation for a company that would want to carry out this project.  After reading what we are going to present they will be able to make an informed decision with an approximation of the real costs of the project.\bigskip
+
+We expect the process from start to finish would take around a month, taking into account that we would have to have several conversations with the clients to really understand the product that they want, since we doubt they would present such a precise description as given in the statement. It is also important to take into account the several updates on the project that we would have to present to the company to give feedback and the time lost due to the response time. This would take approximately \textbf{20 hours}.\bigskip
+
+After this we assume that an analysis on the several techniques that could be used to solve the problem is also necessary, the company is not going to ask for the development of an MDP, so we would have to do an analysis of the possible choices. More or less this could take \textbf{5 hours}.\bigskip
+
+After deciding that we would use an MDP we would do the design, implementation and testing of the general model, make sure that it works correctly and that the organization is scalable, simple, efficient and coherent. This could add up to \textbf{35 hours} in total.\bigskip
+
+It would also be necessary to adjust the general implementation to the specific problem of the clients, this would take much more time than what it has taken us, since we would want to be sure that it is a good and efficient solution, this would probably take the application of more specialized techniques. We think this could take \textbf{10 hours}.\bigskip
+
+Finally the documentation, adjustment, and correcting bugs would take place. Being optimistic, this would be approximately \textbf{15 hours}.\bigskip
+
+Thus, in total we will have spent \(20+5+35+10+15 =\) \textbf{85 hours}.
+We assume the time would be the total spent by all the people involved, not for each individual. Since it requires the expertise of qualified computer engineers, and assuming a constant rate of 15€/hour + \textbf{500€} of fixed costs on the project (that is just for carrying any project and is intended for filtering projects and to cover electricity supply, equipment, rent of the office\ldots{}). We would say a project like this could cost around \textbf{1 750€}, of course the use of the software could have an additional cost that depends on the number of products sold with the software, which we think could be an amount between 0.5\% - 5\% of the selling price.
+\newpage
+\section{Conclusions}
+\label{sec:org9856ece}
+The project has not been very difficult, MDPs are very straightforward to implement, maybe the most challenging part has been the design and the optimization of the code.\bigskip
+
+We were indicated to develop the project in python but we think it may have been better to use a different programming language, since python may not adapt to the exclusive needs of MDPs, since it is an interpreted language the performance is not as good as other programming languages, also the management of parallelism in python is not the best, specially in markov decision processes, good parallelism can improve a lot the time used to obtain the result.\bigskip
+
+Overall we have learned a lot from the project, using in real programs the tools provided in class to solve a real world problem that could be used by a company to control their devices. It has also helped us consolidate the knowledge on MDPs and made us think more deeply about the minimal amount of information needed to have a successful program.
+\end{document}
